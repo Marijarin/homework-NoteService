@@ -12,11 +12,12 @@ abstract class CrudService<T, K> where T : Element, K : Comment {
         return elems.last()
     }
 
-    open fun update(elem: T, id: Int): Boolean {
+    open fun update(element: T, ident: Int): Boolean {
         var flag = false
-        for ((index) in elems.withIndex())
-            if (elem.id == elems[index].id) {
-                elems[index] = elem
+        for ((index, _) in elems.withIndex())
+            if (elems[index].id == ident) {
+                element.id = ident
+                elems[index] = element
                 flag = true
             }
         return flag
@@ -26,8 +27,8 @@ abstract class CrudService<T, K> where T : Element, K : Comment {
         if (!elemIds.contains(elemId)) {
             return 0
         }
-        for ((index, element) in elems.withIndex()) {
-            if (elemId == element.id) {
+        for ((index, _) in elems.withIndex()) {
+            if (elemId == elems[index].id) {
                 elems[index].deleted = true
                 elemIds.remove(elemId)
                 break
@@ -37,14 +38,20 @@ abstract class CrudService<T, K> where T : Element, K : Comment {
     }
 
     open fun get(): String {
-        return elems.toString()
+        val existingElems = mutableListOf<T>()
+        for (elem in elems){
+            if (!elem.deleted){
+                existingElems+=elem
+            }
+        }
+        return existingElems.toString()
     }
 
-    open fun getById(elemid: Int): T {
-        var found = Element() as T
+    open fun getById(elemid: Int): String {
+        var found = ""
         for ((index, element) in elems.withIndex()) {
             if (elemid == element.id) {
-                found = elems[index]
+                found = elems[index].toString()
                 break
             } else throw NoteNotFoundException("No note with $elemid")
         }
@@ -63,11 +70,11 @@ abstract class CrudService<T, K> where T : Element, K : Comment {
         return cid
     }
 
-    open fun getComments(noteId: Int, ownerId: Int, sort: Boolean, offset: Int = 0, count: Int = 0): String {
+    open fun getComments(noteId: Int, ownerId: Int, sort: Boolean, offset: Int = 0, count: Int = 1): String {
         val noteComments = mutableListOf<K>()
         val s : String
         for (comment in comments){
-            if (comment.elemId == noteId) {
+            if (comment.elemId == noteId && !comment.deleted) {
                 noteComments += comment
             }
         }
@@ -85,6 +92,7 @@ abstract class CrudService<T, K> where T : Element, K : Comment {
         var flag = false
         for ((index) in comments.withIndex()) {
             if (commentIds[index] == cid) {
+                comment.id = cid
                 comments[index] = comment
                 flag = true
             }
@@ -121,7 +129,7 @@ abstract class CrudService<T, K> where T : Element, K : Comment {
                     commentIds+= commentId
                     break
                 }
-                if (commentId == comment.id){
+                if (commentId == comment.id ){
                     return 0
                 }
             }
