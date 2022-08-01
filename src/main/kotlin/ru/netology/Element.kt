@@ -9,8 +9,7 @@ open class Element(
     open val date: Int = LocalDateTime.now().nano,
     open val text: String = "Text of an element",
     open var deleted: Boolean = false
-) {
-}
+)
 
 data class Note(
     override var id: Int = -1,
@@ -19,4 +18,4 @@ data class Note(
     override val date: Int = LocalDateTime.now().nano,
     override val text: String,
     override var deleted: Boolean = false
-) : Element(id, ownerId, fromId, date, text, deleted) {}
+) : Element(id, ownerId, fromId, date, text, deleted)

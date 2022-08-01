@@ -9,8 +9,7 @@ open class Comment (
         open val text: String = "This is the text of a comment",
         open var elemId: Int = -1,
         open var deleted: Boolean = false
-        ) {
-}
+        )
 data class CommentToNote(
         override var id: Int = -1,
         override val ownerId: Int = -1,
